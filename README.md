@@ -7,6 +7,12 @@ Check List of needed applications:
 - Neofetch
 - Openssh
 - Nordvpn
+- inotify-tools
+
+### Aliases
+
+cat /etc/shells (To Check What shells are available)
+echo $SHELL
 
 ### Monitors & Display
 

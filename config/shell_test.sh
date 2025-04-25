@@ -1,38 +1,28 @@
-# #!/bin/bash
+#!/bin/bash
+# Script to test other scripts in different shell environments.
 
-# # Testing script for both Bash and Zsh settings
+function shell_test() {
+    echo "Which script would you like to test? (bash_only.sh, zsh_only.sh, both.sh)"
+    read script_name
 
-# # Test Bash-specific settings
-# if [ -n "$BASH_VERSION" ]; then
-#     echo "Testing Bash-specific settings:"
+    # Check if the file exists in the config folder
+    script_path="./config/$script_name"
+    if [ ! -f "$script_path" ]; then
+        echo "Script does not exist. Please check the filename and try again."
+        return
+    fi
 
-#     # Check history settings
-#     echo "HISTCONTROL: $HISTCONTROL"
-#     echo "HISTSIZE: $HISTSIZE"
-#     echo "HISTFILESIZE: $HISTFILESIZE"
+    # Define the shells to test
+    declare -A shells
+    shells=(["bash"]="bash" ["zsh"]="zsh" ["sh"]="sh")
 
-#     # Check if histappend is enabled
-#     echo -n "histappend option is "
-#     shopt histappend && echo "enabled" || echo "disabled"
+    # Test the script in each shell
+    for shell in "${!shells[@]}"; do
+        if $shell "$script_path" > /dev/null 2>&1; then
+            echo "$shell ✅ Passed"
+        else
+            echo "$shell ❌ Failed"
+        fi
+    done
+}
 
-#     # Check the prompt
-#     echo "Prompt (PS1): $PS1"
-
-# # Test Zsh-specific settings
-# elif [ -n "$ZSH_VERSION" ]; then
-#     echo "Testing Zsh-specific settings:"
-
-#     # Check extended glob and history verify options
-#     echo -n "EXTENDED_GLOB is "
-#     [[ -o extendedglob ]] && echo "enabled" || echo "disabled"
-
-#     echo -n "HIST_VERIFY is "
-#     [[ -o histverify ]] && echo "enabled" || echo "disabled"
-
-#     # Check the prompt
-#     echo "Prompt (PS1): $PS1"
-
-#     # Check if vcs_info is autoloaded (bit harder to test directly, checking function existence)
-#     echo -n "vcs_info function is "
-#     whence -f vcs_info && echo "defined" || echo "not defined"
-# fi

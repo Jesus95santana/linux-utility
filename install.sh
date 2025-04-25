@@ -1,60 +1,46 @@
-# #!/bin/bash
+# Detect current script path dynamically
+if [ -n "$BASH_SOURCE" ]; then
+    # In Bash
+    script_path="${BASH_SOURCE[0]}"
+elif [ -n "$ZSH_VERSION" ]; then
+    # In Zsh
+    script_path="${(%):-%N}"
+else
+    # Fallback
+    script_path="$0"
+fi
 
-# # Get the absolute path of the directory where the script resides
-# script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
-# script_path="${script_dir}/linux-utility.sh"
+# Get the absolute path of the linux_utility.sh
+script_dir="$(cd "$(dirname "$script_path")" && pwd)"
 
-# # Function to add source line to a shell config file if it doesn't already exist
-# function add_source_line {
-#     local config_file=$1
-#     local line="source $script_path"
+script_path="${script_dir}/linux_utility.sh"
 
-#     # Check if the file exists and is writable
-#     if [[ -f "$config_file" && -w "$config_file" ]]; then
-#         # Check if the line already exists in the file
-#         if ! grep -Fxq "$line" "$config_file"; then
-#             echo "$line" >> "$config_file"
-#             echo "Added source entry to $config_file"
-#         else
-#             echo "Source entry already exists in $config_file"
-#         fi
-#     else
-#         echo "Error: $config_file does not exist or is not writable."
-#     fi
-# }
-
-# # Add the source line to both .bashrc and .zshrc
-# add_source_line ~/.bashrc
-# add_source_line ~/.zshrc
-
-# echo "Setup complete. Please restart your terminal."
-
-#!/bin/bash
-
-# Define the path to the utility script
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-script_path="${script_dir}/linux-utility.sh"
-
-# Function to add an alias to a shell config file
-function add_alias_line {
+# Function to modify shell configs
+function install_to_shell {
     local config_file=$1
-    local alias_name="linux"
-    local alias_command="bash ${script_path}"
+    local source_line="source \"$script_path\""
+    local alias_line="alias linux='menu'"
 
-    # Check if the file exists and is writable
     if [[ -f "$config_file" && -w "$config_file" ]]; then
-        # Remove existing alias to avoid duplicates
-        sed -i "/alias ${alias_name}=/d" "$config_file"
-        # Add new alias
-        echo "alias ${alias_name}='${alias_command}'" >> "$config_file"
-        echo "Added or updated alias '${alias_name}' in ${config_file}"
+        # Add the source line if it doesn't already exist
+        if ! grep -Fxq "$source_line" "$config_file"; then
+            echo "$source_line" >> "$config_file"
+            echo "✅ Added sourcing of linux_utility.sh to $config_file"
+        else
+            echo "ℹ️ Already sourcing linux_utility.sh in $config_file"
+        fi
+
+        # Add the 'linux' alias (optional: points to menu function)
+        sed -i "/alias linux=/d" "$config_file"
+        echo "$alias_line" >> "$config_file"
+        echo "✅ Added alias 'linux' to $config_file"
     else
-        echo "Error: ${config_file} does not exist or is not writable."
+        echo "❌ Cannot write to $config_file"
     fi
 }
 
-# Add or update the alias in both .bashrc and .zshrc
-add_alias_line ~/.bashrc
-add_alias_line ~/.zshrc
+# Install into .bashrc and .zshrc
+install_to_shell ~/.bashrc
+install_to_shell ~/.zshrc
 
-echo "Setup complete. Please restart your terminal."
+echo "✅ Setup complete. Please restart your terminal."
