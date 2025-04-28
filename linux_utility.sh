@@ -10,6 +10,11 @@ fi
 # Correct dynamic path detection
 script_dir="$(cd "$(dirname "$script_path")" && pwd)"
 
+
+
+source "$script_dir/uninstall.sh"
+source "$script_dir/install.sh"
+
 # Counters
 alias_count=0
 function_count=0
@@ -21,13 +26,6 @@ if compgen -G "$script_dir/aliases/*.sh" > /dev/null; then
             source "$alias_file"
             ((alias_count++))
         fi
-    done
-fi
-
-# Load config (optional: no counting here unless you want to)
-if compgen -G "$script_dir/config/*.sh" > /dev/null; then
-    for config_file in "$script_dir"/config/*.sh; do
-        [ -f "$config_file" ] && source "$config_file"
     done
 fi
 
@@ -48,23 +46,34 @@ echo "✅ Loaded $function_count function file(s)"
 
 menu() {
     clear
-    while true; do
-        echo "Please select an option:"
-        echo "1. Show IP and Private IP"
-        echo "2. Disk Speed Test"
-        echo "3. Exit"
-        read -p "Enter your choice: " choice
-
-        case "$choice" in
-            1) show_ips ;;
-            2) disk_speed_test ;;
-            3) echo "Exiting..."; break ;;
-            *) echo "Invalid option. Please try again." ;;
-        esac
-        echo
-        read -p "Press enter to continue..."
-        clear
-    done
+    echo "Please select an option:"
+    echo "1. Install Zsh, Oh My Zsh, Powerlevel10k, and set Zsh as default"
+    echo "2. Uninstall Zsh, Oh My Zsh, and Powerlevel10k"
+    echo "3. Only set Zsh as default shell"
+    echo "4. Show IP and Private IP"
+    echo "5. Disk Speed Test"
+    echo "6. Exit"
+    read -p "Enter your choice: " choice
+    case "$choice" in
+        1)
+            install_all
+            echo "✅ Installation complete. Please restart your terminal."
+            ;;
+        2)
+            uninstall_all
+            echo "✅ Uninstallation complete. Please restart your terminal."
+            ;;
+        3)
+            set_default_zsh  # Set Zsh as default without installing/uninstalling anything else
+            ;;
+        4) show_ips ;;
+        5) disk_speed_test ;;
+        6) echo "Exiting..."; break ;;
+        *) echo "Invalid option selected. Exiting." ;;
+    esac
+    echo
+    read -p "Press enter to continue..."
+    clear
 }
 
 # Direct call to the menu function if not sourced

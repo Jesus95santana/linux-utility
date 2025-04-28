@@ -33,8 +33,25 @@ function uninstall_from_shell {
     fi
 }
 
-# Uninstall from both .bashrc and .zshrc
-uninstall_from_shell ~/.bashrc
-uninstall_from_shell ~/.zshrc
+# Function to uninstall Oh My Zsh
+uninstall_oh_my_zsh() {
+    echo "Uninstalling Oh My Zsh..."
+    rm -rf "$HOME/.oh-my-zsh"
+    echo "Oh My Zsh has been uninstalled."
+}
 
-echo "✅ Uninstall complete. You may restart your terminal."
+# Function to uninstall Powerlevel10k
+uninstall_powerlevel10k() {
+    echo "Uninstalling Powerlevel10k..."
+    rm -rf "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+    echo "Powerlevel10k has been uninstalled."
+}
+
+uninstall_all() {
+    # Uninstall from both .bashrc and .zshrc
+    uninstall_from_shell ~/.bashrc
+    uninstall_from_shell ~/.zshrc
+    uninstall_powerlevel10k
+    uninstall_oh_my_zsh
+    echo "✅ Uninstall complete. You may restart your terminal."
+}
