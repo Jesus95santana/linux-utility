@@ -1,5 +1,15 @@
 #!/bin/zsh
 
+# DEBUG MODE (set to 1 for debug, or pass --debug as an argument)
+DEBUG=0
+for arg in "$@"; do
+    [[ "$arg" == "--debug" ]] && DEBUG=1
+done
+
+debug_echo() {
+    [[ "$DEBUG" -eq 1 ]] && echo "[DEBUG] $@"
+}
+
 # Dynamic script path detection (Zsh-specific)
 script_path="${(%):-%N}"
 script_dir="$(cd "$(dirname "$script_path")" && pwd)"
@@ -37,13 +47,16 @@ else
 fi
 
 # Print summary
-echo "✅ Loaded $alias_count alias file(s)"
-echo "✅ Loaded $function_count function file(s)"
+debug_echo "✅ Loaded $alias_count alias file(s)"
+debug_echo "✅ Loaded $function_count function file(s)"
+debug_echo "All aliases and functions loaded."
+
 
 menu() {
     while true; do
         clear
         echo "Please select an option:"
+        echo "0. Debug: show loaded aliases/functions"
         echo "1. Installation"
         echo "2. Uninstall Zsh, Oh My Zsh, and Powerlevel10k"
         echo "3. Only set Zsh as default shell"
@@ -53,6 +66,16 @@ menu() {
         echo -n "Enter your choice: "
         read choice
         case "$choice" in
+            0)
+                echo
+                echo "🔍  Loaded alias files ($alias_count):"
+                for f in "${alias_files[@]}"; do echo "   • $f"; done
+                echo
+                echo "🔍  Loaded function files ($function_count):"
+                for f in "${function_files[@]}"; do echo "   • $f"; done
+                echo
+                echo -n "Press enter to continue…" ; read _
+                ;;
             1)
                 installation_menu
                 ;;
