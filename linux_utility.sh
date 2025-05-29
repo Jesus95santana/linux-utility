@@ -90,7 +90,7 @@ menu() {
                 show_ips
                 ;;
             5)
-                disk_speed_test
+                speed_test
                 ;;
             6)
                 echo "Exiting..."
