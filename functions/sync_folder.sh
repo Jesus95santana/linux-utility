@@ -21,7 +21,7 @@ sync_folder() {
     echo "🕵️ Watching for changes. Press Ctrl+C to stop."
 
     while inotifywait -r -e modify,create,delete,move "$source" >/dev/null 2>&1; do
-        rsync -az --delete "$source/" "$dest/"
+        rsync -avz --delete --progress --human-readable "$source/" "$dest/"
         if [[ $? -eq 0 ]]; then
             echo "✅ Sync successful at $(date '+%T')"
         else

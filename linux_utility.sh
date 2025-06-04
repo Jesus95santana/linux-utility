@@ -62,7 +62,8 @@ menu() {
         echo "3. Only set Zsh as default shell"
         echo "4. Show IP and Private IP"
         echo "5. Disk Speed Test"
-        echo "6. Exit"
+        echo "6. Sync Folder (rsync, watches for changes)"
+        echo "7. Exit"
         echo -n "Enter your choice: "
         read choice
         case "$choice" in
@@ -93,6 +94,14 @@ menu() {
                 speed_test
                 ;;
             6)
+                echo "Enter source folder:"
+                read src
+                echo "Enter destination folder:"
+                read dst
+                sync_folder "$src" "$dst"
+                echo -n "Press enter to continue…" ; read _
+                ;;
+            7)
                 echo "Exiting..."
                 break
                 ;;
